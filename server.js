@@ -31,120 +31,130 @@ function writeUserData(userData, callback) {
 
 // Create an HTTP server
 const server = http.createServer((req, res) => {
-    if (req.method === 'GET' && req.url === '/api/users') {
-      // Read user data from a file
+  if (req.method === 'GET' && req.url === '/api/users') {
+    handleGetUsers(req, res);
+  } else if (req.method === 'POST' && req.url === '/api/users') {
+    handlePostUser(req, res);
+  } else if (req.method === 'PUT' && req.url.startsWith('/api/users/')) {
+    handlePutUser(req, res);
+  } else if (req.method === 'DELETE' && req.url.startsWith('/api/users/')) {
+    handleDeleteUser(req, res);
+  } else {
+    sendErrorResponse(res, 404, 'Not Found');
+  }
+});
+
+function handleGetUsers(req, res) {
+  readUserData((err, data) => {
+    if (err) {
+      sendErrorResponse(res, 500, 'Internal Server Error');
+      return;
+    }
+    sendJSONResponse(res, 200, data);
+  });
+}
+
+function handlePostUser(req, res) {
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
+
+  req.on('end', () => {
+    try {
+      const newUser = JSON.parse(body);
       readUserData((err, data) => {
         if (err) {
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Internal Server Error');
+          sendErrorResponse(res, 500, 'Internal Server Error');
           return;
         }
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(data));
+        data.push(newUser);
+        writeUserData(data, (err) => {
+          if (err) {
+            sendErrorResponse(res, 500, 'Internal Server Error');
+            return;
+          }
+          sendPlainTextResponse(res, 201, 'User created successfully');
+        });
       });
-    } else if (req.method === 'POST' && req.url === '/api/users') {
-      // Handle POST request to create a new user
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk;
-      });
-  
-      req.on('end', () => {
-        try {
-          const newUser = JSON.parse(body);
-          readUserData((err, data) => {
-            if (err) {
-              res.writeHead(500, { 'Content-Type': 'text/plain' });
-              res.end('Internal Server Error');
-              return;
-            }
-            data.push(newUser);
-            writeUserData(data, (err) => {
-              if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error');
-                return;
-              }
-              res.writeHead(201, { 'Content-Type': 'text/plain' });
-              res.end('User created successfully');
-            });
-          });
-        } catch (error) {
-          res.writeHead(400, { 'Content-Type': 'text/plain' });
-          res.end('Invalid JSON format');
-        }
-      });
-    } else if (req.method === 'PUT' && req.url.startsWith('/api/users/')) {
-      // Handle PUT request to update a user
-      const userId = req.url.split('/').pop();
-      let body = '';
-      req.on('data', (chunk) => {
-        body += chunk;
-      });
-  
-      req.on('end', () => {
-        try {
-          const updatedUser = JSON.parse(body);
-          readUserData((err, data) => {
-            if (err) {
-              res.writeHead(500, { 'Content-Type': 'text/plain' });
-              res.end('Internal Server Error');
-              return;
-            }
-            const userIndex = data.findIndex((user) => user.id === userId);
-            if (userIndex === -1) {
-              res.writeHead(404, { 'Content-Type': 'text/plain' });
-              res.end('User not found');
-              return;
-            }
-            data[userIndex] = { ...data[userIndex], ...updatedUser };
-            writeUserData(data, (err) => {
-              if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error');
-                return;
-              }
-              res.writeHead(200, { 'Content-Type': 'text/plain' });
-              res.end('User updated successfully');
-            });
-          });
-        } catch (error) {
-          res.writeHead(400, { 'Content-Type': 'text/plain' });
-          res.end('Invalid JSON format');
-        }
-      });
-    } else if (req.method === 'DELETE' && req.url.startsWith('/api/users/')) {
-      // Handle DELETE request to delete a user
-      const userId = req.url.split('/').pop();
+    } catch (error) {
+      sendErrorResponse(res, 400, 'Invalid JSON format');
+    }
+  });
+}
+
+function handlePutUser(req, res) {
+  const userId = req.url.split('/').pop();
+  let body = '';
+  req.on('data', (chunk) => {
+    body += chunk;
+  });
+
+  req.on('end', () => {
+    try {
+      const updatedUser = JSON.parse(body);
       readUserData((err, data) => {
         if (err) {
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Internal Server Error');
+          sendErrorResponse(res, 500, 'Internal Server Error');
           return;
         }
         const userIndex = data.findIndex((user) => user.id === userId);
         if (userIndex === -1) {
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.end('User not found');
+          sendErrorResponse(res, 404, 'User not found');
           return;
         }
-        data.splice(userIndex, 1);
+        data[userIndex] = { ...data[userIndex], ...updatedUser };
         writeUserData(data, (err) => {
           if (err) {
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Internal Server Error');
+            sendErrorResponse(res, 500, 'Internal Server Error');
             return;
           }
-          res.writeHead(200, { 'Content-Type': 'text/plain' });
-          res.end('User deleted successfully');
+          sendPlainTextResponse(res, 200, 'User updated successfully');
         });
       });
-    } else {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('Not Found');
+    } catch (error) {
+      sendErrorResponse(res, 400, 'Invalid JSON format');
     }
   });
- 
+}
+
+function handleDeleteUser(req, res) {
+  const userId = req.url.split('/').pop();
+  readUserData((err, data) => {
+    if (err) {
+      sendErrorResponse(res, 500, 'Internal Server Error');
+      return;
+    }
+    const userIndex = data.findIndex((user) => user.id === userId);
+    if (userIndex === -1) {
+      sendErrorResponse(res, 404, 'User not found');
+      return;
+    }
+    data.splice(userIndex, 1);
+    writeUserData(data, (err) => {
+      if (err) {
+        sendErrorResponse(res, 500, 'Internal Server Error');
+        return;
+      }
+      sendPlainTextResponse(res, 200, 'User deleted successfully');
+    });
+  });
+}
+
+// Helper functions
+function sendJSONResponse(res, status, data) {
+  res.writeHead(status, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(data));
+}
+
+function sendPlainTextResponse(res, status, message) {
+  res.writeHead(status, { 'Content-Type': 'text/plain' });
+  res.end(message);
+}
+
+function sendErrorResponse(res, status, message) {
+  sendPlainTextResponse(res, status, message);
+}
 
 // Start the server on port 3000
 server.listen(3000, () => {
