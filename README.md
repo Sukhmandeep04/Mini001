@@ -1,6 +1,5 @@
 # Mini001
 <a href="https://codeclimate.com/github/Sukhmandeep04/Mini001/maintainability"><img src="https://api.codeclimate.com/v1/badges/eba87c50ea47e43824f1/maintainability" /></a>
-<a href="https://codeclimate.com/github/Sukhmandeep04/Mini001/maintainability"><img src="https://api.codeclimate.com/v1/badges/eba87c50ea47e43824f1/maintainability" /></a>
 
 📄OVERVIEW: This code snippet combines two key functionalities. Firstly, it contains a set of functions for performing basic file operations such as reading, writing, and deleting                  files using the Node.js fs (File System) module. Secondly, it creates an HTTP server that enables user data management through a RESTful API. The primary database system                stores user data in a simple JSON file.
 
