@@ -66,7 +66,7 @@ __________________________
 
 2. `writeUserData(userData, callback)`: This function writes user data to the `users.json` file. It serializes the data to JSON format and handles potential errors during file writing.
 
-3. `handleGetUsers(req, res)`: Handles HTTP GET requests to retrieve a list of all users. It reads user data using `readUserData` and sends it as a JSON response.
+3. `handleGetUsers(req, res)`: Handles HTTP GET requests to retrieve a list of all users, including advanced features like filtering and sorting using query parameters. It reads user data using `readUserData` and sends it as a JSON response.
 
 4. `handlePostUser(req, res)`: Handles HTTP POST requests to create new users. It parses the request body as JSON, adds the new user to the existing data, and writes the updated data using `writeUserData`.
 
@@ -79,15 +79,15 @@ __________________________
 
 -- Routes
 
-- GET `/api/users`: Retrieves a list of all users.
-- POST `/api/users`: Creates a new user.
-- PUT `/api/users/{id}`: Updates an existing user by their ID.
-- DELETE `/api/users/{id}`: Deletes an existing user by their ID.
+- GET `/api/users`: Retrieves a list of all users,supporting filtering and sorting using query parameters.
+- POST `/api/users`: Creates a new user by parsing JSON data from the request body.
+- PUT `/api/users/{id}`: Updates an existing user by their ID, allowing modifications using JSON data from the request body.
+- DELETE `/api/users/{id}`: Deletes an existing user by their ID and updates the user data.
 
 -- Usage 
       1. Start the server by running `node server.js`.
       2. Access the API at `http://localhost:3000`.
 
 -- Error Handling
-      The server is designed to handle various error scenarios gracefully. It includes handling internal server errors (status code 500), invalid JSON format (status code 400), and           resource not found (status code 404).
+      The server is designed to handle various error scenarios gracefully. It includes handling internal server errors (status code 500),         invalid JSON format (status code 400), and resource not found (status code 404).
 
