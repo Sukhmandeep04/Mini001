@@ -28,12 +28,17 @@ function sendResponse(res, status, contentType, data) {
   res.end(data);
 }
 
+// Refactored function to send JSON responses
+function sendJSONResponse(res, status, data) {
+  sendResponse(res, status, 'application/json', JSON.stringify(data));
+}
+
 // Create an HTTP server
 const server = http.createServer(async (req, res) => {
   try {
     if (req.method === 'GET' && req.url === '/api/users') {
       const data = await readUserData();
-      sendResponse(res, 200, 'application/json', JSON.stringify(data));
+      sendJSONResponse(res, 200, data);
     } else if (req.method === 'POST' && req.url === '/api/users') {
       let body = '';
       req.on('data', (chunk) => {
