@@ -7,6 +7,9 @@
 📍HTTP Server: The application creates an HTTP server using the built-in http module, allowing users to perform CRUD (Create, Read, Update, Delete) operations on user data. It serves                  as a basic API for user management.
 
 🟡 FILE STRUCTURE 
+      🗂️ new-mini001 - 📁 src - 📘 App.js
+                        \
+                          📁data - 📗users.json
       📕 fileOperations.js
       📕 Samplefile.txt
       📗 server.js
@@ -98,3 +101,7 @@ __________________________
 2. Request Handling: When handling HTTP requests, for example handleGetUsers, handlePostUser, handlePutUser, and handleDeleteUser, the code listens for incoming requests asynchronously. To accomplish this task, event listeners such as 'req.on('data')' and 'req.on('end')' are utilized. These listeners enable the server to process requests without blocking the event loop. When an HTTP request is received, it is placed in the event queue, and the event loop continuously checks for pending requests to handle. This ensures that multiple requests can be processed concurrently, making the server efficient and responsive.
 
 3. Server Start: The final step is to start the HTTP server using the server.listen method. Once the server is up and running, it enters an event-driven mode that listens for incoming connections. The event loop manages the server event loop, ensuring that it can handle multiple connections simultaneously without obstructing other tasks. When a client requests an HTTP, the server processes it asynchronously, and the event loop keeps the server responsive.
+
+
+📘 App.js
+________________________
