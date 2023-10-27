@@ -8,6 +8,7 @@
 
 🟡 FILE STRUCTURE 
       🗂️ new-mini001 - 📁 src - 📘 App.js
+                             -  📘 useApp.js
       📕 fileOperations.js
       📕 Samplefile.txt
       📗 server.js
@@ -42,6 +43,66 @@ ________________________
    - Description: The APIIntegrationExample functional component demonstrates fetching data from an API using the Axios library and                          displaying it.
    - How to Use: This component sends an HTTP GET request to an API (http://localhost:3000/api/users) to fetch a list of users and display                  their names in an unordered list.
      
+
+📑For mini-project-6
+
+The App component is a functional React component that demonstrates React hooks, specifically useState and useEffect, to manage state and perform asynchronous data fetching. This component fetches user data from an API and provides a user interface for refreshing the data.
+
+- Imports
+  The component imports the necessary modules, useState and useEffect, from React and the Axios library for making HTTP requests.
+
+- Component Defination
+
+  export const App = () => {
+  const [users, setUsers] = useState([]);
+
+  . The component defines a functional component named App.
+  . It uses the useState hook to declare state variable users initialized as an empty array and a function setUsers to update this state.
+
+- Data Fetching with useEffect
+  . The useEffect hook executes the data fetching code when the component is mounted.
+  . It makes an HTTP GET request to the specified API endpoint (http://localhost:3000/api/v1/users).
+  . If the request is successful, the fetched user data is logged and stored in the users state.
+  . If an error occurs, the system will log and save an error message.
+
+- Event Handler for Data Refresh
+  . The component defines a function handleRefresh, intended to be called when the user wants to refresh the user data.
+  . When invoked, it performs another HTTP GET request to the same API endpoint to refresh the user data.
+  . If successful, it updates the users state with the refreshed data.
+  . The system logs any errors that occur during the refresh process.
+
+- Render Method
+
+    return { users, handleRefresh };
+
+  . The App component returns an object containing two properties: users and handleRefresh.
+  . Destructuring the App component object allows other components to access the user's state and the handleRefresh function actively.
+
+
+📘 useApp.js
+________________________
+
+- Imports
+  The component imports the necessary modules: React from the 'react' library and the custom hook useApp from the './App.js' file.
+
+- Component Defination
+
+  function App() {
+    const { users, handleRefresh } = useApp();
+
+  . The component defines a functional component named App.
+  . It uses the useApp custom hook to destructure the users state and the handleRefresh function. This hook allows the component to access 
+    the state and behaviour defined in the App.js file.
+
+- User Interface
+
+  . The App component returns a user interface that displays a list of users and provides a "Refresh" button.
+  . The <h1> element displays the title "User List."
+  . When you click on the "Refresh" button, it triggers the handleRefresh function, which refreshes the user data.
+  . The list of users is conditionally rendered based on the presence of data:
+      - If users are not empty, it maps through the users and displays their names with unique keys.
+      - If no users are available, it shows the message "No users available."
+
 
 📕 fileOperations.js
 _____________________________
