@@ -1,7 +1,9 @@
 import React from 'react';
-import {useApp} from './App2.js';
+//importing the custom hooks
+import {useApp} from './App.js';
 
 function App() {
+    // Using the custom hook to access state and functions
     const{users, handleRefresh} = useApp();
 return(
     <div>
