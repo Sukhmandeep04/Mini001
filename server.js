@@ -1,38 +1,66 @@
 const http = require('http');
 const fs = require('fs').promises;
 const path = require('path');
+const { MongoClient } = require('mongodb');
 
-// Function to read user data from the JSON file using Promises
+const mongoUrl = 'mongodb://localhost:3000';
+const dbName = 'Mini001';
+
+const server = http.createServer(async (req, res) => {
+  if (req.method === 'GET' && req.url === '/api/users') {
+    await handleGetUsers(req, res);
+  } else if (req.method === 'POST' && req.url === '/api/users') {
+    await handlePostUser(req, res);
+  } else if (req.method === 'PUT' && req.url.startsWith('/api/users/')) {
+    const userId = req.url.split('/').pop();
+    await handlePutUser(req, res, userId);
+  } else if (req.method === 'DELETE' && req.url.startsWith('/api/users/')) {
+    const userId = req.url.split('/').pop();
+    await handleDeleteUser(req, res, userId);
+  } else {
+    sendResponse(res, 404, 'text/plain', 'Not Found');
+  }
+});
+
 async function readUserData() {
+  const client = new MongoClient(mongoUrl);
   try {
-    const data = await fs.readFile(path.join(__dirname, 'users.json'), 'utf8');
-    return JSON.parse(data);
+    await client.connect();
+    const db = client.db(dbName);
+    const usersCollection = db.collection('users');
+    const userData = await usersCollection.find({}).toArray();
+    return userData;
   } catch (error) {
     throw error;
+  } finally {
+    client.close();
   }
 }
 
-// Function to write user data to the JSON file using Promises
 async function writeUserData(userData) {
+  const client = new MongoClient(mongoUrl);
   try {
-    await fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(userData, null, 2));
+    await client.connect();
+    const db = client.db(dbName);
+    const usersCollection = db.collection('users');
+    await usersCollection.deleteMany({});
+    await usersCollection.insertMany(userData);
   } catch (error) {
     throw error;
+  } finally {
+    client.close();
   }
 }
 
-// Helper function to send responses
 function sendResponse(res, status, contentType, data) {
   res.writeHead(status, { 'Content-Type': contentType });
   res.end(data);
 }
 
-// Refactored function to send JSON responses
 function sendJSONResponse(res, status, data) {
   sendResponse(res, status, 'application/json', JSON.stringify(data));
 }
 
-// Function to handle GET requests for /api/users
 async function handleGetUsers(req, res) {
   try {
     const data = await readUserData();
@@ -42,7 +70,6 @@ async function handleGetUsers(req, res) {
   }
 }
 
-// Function to handle POST requests for /api/users
 async function handlePostUser(req, res) {
   let body = '';
   req.on('data', (chunk) => {
@@ -62,7 +89,6 @@ async function handlePostUser(req, res) {
   });
 }
 
-// Function to handle PUT requests for /api/users/:userId
 async function handlePutUser(req, res, userId) {
   let body = '';
   req.on('data', (chunk) => {
@@ -87,7 +113,6 @@ async function handlePutUser(req, res, userId) {
   });
 }
 
-// Function to handle DELETE requests for /api/users/:userId
 async function handleDeleteUser(req, res, userId) {
   const data = await readUserData();
   const userIndex = data.findIndex((user) => user.id === userId);
@@ -100,24 +125,6 @@ async function handleDeleteUser(req, res, userId) {
   }
 }
 
-// Create an HTTP server
-const server = http.createServer(async (req, res) => {
-  if (req.method === 'GET' && req.url === '/api/users') {
-    await handleGetUsers(req, res);
-  } else if (req.method === 'POST' && req.url === '/api/users') {
-    await handlePostUser(req, res);
-  } else if (req.method === 'PUT' && req.url.startsWith('/api/users/')) {
-    const userId = req.url.split('/').pop();
-    await handlePutUser(req, res, userId);
-  } else if (req.method === 'DELETE' && req.url.startsWith('/api/users/')) {
-    const userId = req.url.split('/').pop();
-    await handleDeleteUser(req, res, userId);
-  } else {
-    sendResponse(res, 404, 'text/plain', 'Not Found');
-  }
-});
-
-// Start the server on port 3000
 server.listen(3000, () => {
   console.log('Server running on <http://localhost:3000/>');
 });
