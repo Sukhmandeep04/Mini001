@@ -3,32 +3,29 @@ import axios from 'axios';
 
 export const App = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
+
     axios.get('http://localhost:3000/api/v1/users')
       .then(response => {
         setUsers(response.data);
-        setLoading(false); 
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        setLoading(false); 
+      })
+      .finally(() => {
+        setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const handleRefresh = () => {
-    setLoading(true); 
-
-    axios.get('http://localhost:3000/api/v1/users')
-      .then(response => {
-        setUsers(response.data);
-        setLoading(false); 
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setLoading(false); 
-      });
+    fetchData();
   };
 
   return (
@@ -45,5 +42,4 @@ export const App = () => {
       )}
     </div>
   );
-}  
-
+};
