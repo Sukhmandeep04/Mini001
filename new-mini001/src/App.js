@@ -5,31 +5,28 @@ export const App = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true); 
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
+  
     axios.get('http://localhost:3000/api/v1/users')
       .then(response => {
         setUsers(response.data);
-        setLoading(false); 
+        setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
-        setLoading(false); 
-      });
-  }, []);
-
-  const handleRefresh = () => {
-    setLoading(true); 
-
-    axios.get('http://localhost:3000/api/v1/users')
-      .then(response => {
-        setUsers(response.data);
-        setLoading(false); 
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setLoading(false); 
+        setLoading(false);
       });
   };
+  
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  const handleRefresh = () => {
+    fetchData();
+  };
+  
 
   return (
     <div>
