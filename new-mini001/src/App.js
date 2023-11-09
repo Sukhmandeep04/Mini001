@@ -1,34 +1,49 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
- 
-// Functional component
+
 export const App = () => {
-  const [users, setUsers] = useState([]); // State for users
- 
-  // Fetch users from API
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true); 
+
   useEffect(() => {
     axios.get('http://localhost:3000/api/v1/users')
       .then(response => {
-        console.log(response.data);
         setUsers(response.data);
+        setLoading(false); 
       })
       .catch(error => {
         console.error('Error fetching data:', error);
+        setLoading(false); 
       });
   }, []);
- 
-  // Event handler for refreshing users
+
   const handleRefresh = () => {
-    // Fetch users again
+    setLoading(true); 
+
     axios.get('http://localhost:3000/api/v1/users')
       .then(response => {
         setUsers(response.data);
+        setLoading(false); 
       })
       .catch(error => {
         console.error('Error fetching data:', error);
+        setLoading(false); 
       });
   };
- 
-  return{ users, handleRefresh }
-};
- 
+
+  return (
+    <div>
+      <button onClick={handleRefresh}>Refresh</button>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {users.map(user => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}  
+
