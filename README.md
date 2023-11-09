@@ -1,11 +1,6 @@
-# Mini001
+# Mini001 [Mini-project-02]
 <a href="https://codeclimate.com/github/Sukhmandeep04/Mini001/maintainability"><img src="https://api.codeclimate.com/v1/badges/eba87c50ea47e43824f1/maintainability" /></a>
 <a href="https://codeclimate.com/github/Sukhmandeep04/Mini001/maintainability"><img src="https://api.codeclimate.com/v1/badges/eba87c50ea47e43824f1/maintainability" /></a>
-
-📄OVERVIEW: This code snippet combines two key functionalities. Firstly, it contains a set of functions for performing basic file operations such as reading, writing, and deleting                  files using the Node.js fs (File System) module. Secondly, it creates an HTTP server that enables user data management through a RESTful API. The primary database system                stores user data in a simple JSON file.
-
-📍File Operations: The code includes functions to read user data from a JSON file (users.json) and write user data back to the file. It efficiently handles errors                                          during these file operations.
-📍HTTP Server: The application creates an HTTP server using the built-in http module, allowing users to perform CRUD (Create, Read, Update, Delete) operations on user data. It serves                  as a basic API for user management.
 
 🟡 FILE STRUCTURE 
       📕 fileOperations.js
@@ -17,42 +12,22 @@
 📕 fileOperations.js
 _____________________________
 
--- readFile(filePath)
-      Purpose: 
-      This function is used to read the contents of a file specified by the filePath parameter.
-      Parameters:
-        •	filePath (string): The path to the file you want to read.
-      Usage:
-      function readFile(filePath)
-
--- writeFile(filePath, data)
-      Purpose: This function is used to write data to a file specified by the filePath parameter.
-      Parameters:
-        •	filePath (string): The path to the file where you want to write the data.
-        •	data (string): The data that you want to write to the file.
-      Usage:
-      const filePath = 'Samplefile.txt';
-      const data = 'Kaur';
-      writeFile(filePath, data);
-
--- deleteFile(filePath)
-      Purpose: This function deletes a file specified by the filePath parameter.
-      Parameters:
-        •	filePath (string): The path to the file you want to delete.
-      Usage:
-      const filePath = 'Samplefile.txt';
-      deleteFile(filePath);
-
-
--- Example Usage
-      In the example provided at the end of the code:
-        •	readFile(filePath); is used to read the file's contents specified by the filePath variable.
-        •	writeFile(filePath, data); is used to write the string 'Kaur' to the file specified by the filePath variable.
-        •	deleteFile(filePath); is used to delete the file specified by the filePath variable.
+-- Functions
       
-  Each function handles potential errors during file operations and provides appropriate error messages when necessary.
+- readFile(filePath)
+    Parameters: filePath (string)
+    Description: This method reads the content of a specified file asynchronously. If the operation is successful, it logs the file content. Otherwise, it logs an error.
+  
+- writeFile(filePath, data)
+    Parameters: filePath (string), data (string)
+    Description: This method writes the provided data to a specified file asynchronously. Upon completion, it logs a success message. If the operation fails, it logs an error.
+  
+- deleteFile(filePath)
+    Parameters: filePath (string)
+    Description: This method deletes a specified file asynchronously. Upon completion, it logs a success message. If the operation fails, it logs an error.
 
 
+  
 📗server.js
 __________________________
 
