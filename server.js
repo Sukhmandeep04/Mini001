@@ -1,5 +1,8 @@
+// Importing the HTTP module for creating an HTTP server
 const http = require('http');
+ // Importing the File System module for file operations
 const fs = require('fs');
+// Importing the Path module for working with file paths
 const path = require('path');
 
 // Function to read user data from the JSON file
@@ -29,7 +32,7 @@ function writeUserData(userData, callback) {
   });
 }
 
-// Create an HTTP server
+// Create an HTTP server and handle different HTTP methods and routes
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/api/users') {
     handleGetUsers(req, res);
@@ -44,6 +47,7 @@ const server = http.createServer((req, res) => {
   }
 });
 
+// Handle GET requests to retrieve user data
 function handleGetUsers(req, res) {
   readUserData((err, data) => {
     if (err) {
@@ -54,6 +58,7 @@ function handleGetUsers(req, res) {
   });
 }
 
+// Handle POST requests to create a new user
 function handlePostUser(req, res) {
   let body = '';
   req.on('data', (chunk) => {
@@ -83,6 +88,8 @@ function handlePostUser(req, res) {
   });
 }
 
+
+// Handle PUT requests to update an existing user
 function handlePutUser(req, res) {
   const userId = req.url.split('/').pop();
   let body = '';
@@ -118,6 +125,7 @@ function handlePutUser(req, res) {
   });
 }
 
+// Handle DELETE requests to delete an existing user
 function handleDeleteUser(req, res) {
   const userId = req.url.split('/').pop();
   readUserData((err, data) => {
@@ -141,22 +149,24 @@ function handleDeleteUser(req, res) {
   });
 }
 
-// Helper functions
+// Helper function to send JSON responses with a specified status code
 function sendJSONResponse(res, status, data) {
   res.writeHead(status, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(data));
 }
 
+// Helper function to send plain text responses with a specified status code
 function sendPlainTextResponse(res, status, message) {
   res.writeHead(status, { 'Content-Type': 'text/plain' });
   res.end(message);
 }
 
+// Helper function to send error responses with a specified status code and message
 function sendErrorResponse(res, status, message) {
   sendPlainTextResponse(res, status, message);
 }
 
-// Start the server on port 3000
+// Start the server on port 3000 and log a message when it starts
 server.listen(3000, () => {
   console.log('Server running on <http://localhost:3000/>');
 });
